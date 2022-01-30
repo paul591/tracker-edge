@@ -31,6 +31,7 @@
 #define TRACKER_MODEL_BARE_SOM                (0x0000)
 #define TRACKER_MODEL_EVAL                    (0x0001)
 #define TRACKER_MODEL_TRACKERONE              (0x0002)
+#define TRACKER_MODEL_PROJECT_89503           (0x0003)
 
 
 //
@@ -41,7 +42,7 @@
 #endif
 
 #ifndef TRACKER_PRODUCT_VERSION
-#define TRACKER_PRODUCT_VERSION               (17)
+#define TRACKER_PRODUCT_VERSION               (100)
 #endif
 
 
@@ -73,11 +74,25 @@
 #define MCP_CAN_RESETN_PIN                    (CAN_RST)
 #define MCP_CAN_INT_PIN                       (CAN_INT)
 
-#define RTC_AM1805_I2C_INSTANCE               (Wire1)
-#define RTC_AM1805_I2C_ADDR                   (HAL_PLATFORM_EXTERNAL_RTC_I2C_ADDR)
 
+//
+// Tracker One Specifc IO
+//
 #define TRACKER_THERMISTOR                    (A0)
 #define TRACKER_USER_BUTTON                   (D1)
 #define TRACKER_GNSS_LOCK_LED                 (D2)
+
+
+//
+// Project 89503 Specific IO
+//
+#define TRACKER_89503_THERMISTOR              (A3)
+#define TRACKER_89503_USER_BUTTON             (D2)
+
+#define TRACKER_89503_STS3X_I2C_INSTANCE      (Wire)
+#define TRACKER_89503_STS3X_I2C_ADDR          (0x4a)
+
+#define TRACKER_89503_ADP8866_I2C_INSTANCE    (Wire)
+#define TRACKER_89503_ADP8866_I2C_ADDR        (HAL_PLATFORM_EXTERNAL_RTC_I2C_ADDR)
 
 //#define RTC_WDT_DISABLE

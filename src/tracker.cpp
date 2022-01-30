@@ -446,24 +446,37 @@ void Tracker::evaluateBatteryCharge() {
 void Tracker::onSleepPrepare(TrackerSleepContext context)
 {
     configService.flush();
-    if (_model == TRACKER_MODEL_TRACKERONE) {
-        TrackerSleep::instance().wakeAtSeconds(System.uptime() + TrackerLowBatterySleepWakeInterval);
+    switch (_model) {
+        case TRACKER_MODEL_TRACKERONE:
+        // Fall through
+        case TRACKER_MODEL_PROJECT_89503: {
+            TrackerSleep::instance().wakeAtSeconds(System.uptime() + TrackerLowBatterySleepWakeInterval);
+        }
+        break;
     }
 }
 
 void Tracker::onSleep(TrackerSleepContext context)
 {
-    if (_model == TRACKER_MODEL_TRACKERONE) {
-        GnssLedEnable(false);
+    switch (_model) {
+        case TRACKER_MODEL_TRACKERONE: {
+            GnssLedEnable(false);
+        }
+        break;
     }
 }
 
 void Tracker::onWake(TrackerSleepContext context)
 {
-    if (_model == TRACKER_MODEL_TRACKERONE) {
-        GnssLedEnable(true);
-        // Ensure battery evaluation starts immediately after waking
-        _evalTick = 0;
+    switch (_model) {
+        case TRACKER_MODEL_TRACKERONE:
+            GnssLedEnable(true);
+        // Fall through
+        case TRACKER_MODEL_PROJECT_89503: {
+            // Ensure battery evaluation starts immediately after waking
+            _evalTick = 0;
+        }
+        break;
     }
 }
 
@@ -555,10 +568,17 @@ int Tracker::init()
     (void)initIo();
 
     // Perform IO setup specific to Tracker One.  Reset the fuel gauge state-of-charge, check if under thresholds.
-    if (_model == TRACKER_MODEL_TRACKERONE)
-    {
-        BLE.selectAntenna(BleAntennaType::EXTERNAL);
-        initBatteryMonitor();
+    switch (_model) {
+        case TRACKER_MODEL_TRACKERONE: {
+            BLE.selectAntenna(BleAntennaType::EXTERNAL);
+            initBatteryMonitor();
+        }
+        break;
+
+        case TRACKER_MODEL_PROJECT_89503: {
+            initBatteryMonitor();
+        }
+        break;
     }
 
     cloudService.init();
@@ -581,13 +601,22 @@ int Tracker::init()
     }
 
     // Check for Tracker One hardware
-    if (_model == TRACKER_MODEL_TRACKERONE)
-    {
-        (void)GnssLedInit();
-        GnssLedEnable(true);
-        temperature_init(TRACKER_THERMISTOR,
-            [this](TemperatureChargeEvent event){ return chargeCallback(event); }
-        );
+    switch (_model) {
+        case TRACKER_MODEL_TRACKERONE: {
+            (void)GnssLedInit();
+            GnssLedEnable(true);
+            temperature_init(TRACKER_THERMISTOR,
+                [this](TemperatureChargeEvent event){ return chargeCallback(event); }
+            );
+        }
+        break;
+
+        case TRACKER_MODEL_PROJECT_89503: {
+            temperature_init(TRACKER_89503_THERMISTOR,
+                [this](TemperatureChargeEvent event){ return chargeCallback(event); }
+            );
+        }
+        break;
     }
 
     motionService.start();
@@ -642,29 +671,37 @@ void Tracker::loop()
     }
 
     // Evaluate low battery conditions
-    if (_model == TRACKER_MODEL_TRACKERONE)
-    {
-        evaluateBatteryCharge();
+    switch (_model) {
+        case TRACKER_MODEL_TRACKERONE:
+        // Fall through
+        case TRACKER_MODEL_PROJECT_89503:{
+            evaluateBatteryCharge();
+        }
+        break;
     }
 
     // fast operations for every loop
     sleep.loop();
     motion.loop();
 
-    // Check for Tracker One hardware
-    if (_model == TRACKER_MODEL_TRACKERONE)
-    {
-        temperature_tick();
+    // Check for temperature enabled hardware
+    switch (_model) {
+        case TRACKER_MODEL_TRACKERONE:
+        // Fall through
+        case TRACKER_MODEL_PROJECT_89503: {
+            temperature_tick();
 
-        if (temperature_high_events())
-        {
-            location.triggerLocPub(Trigger::NORMAL,"temp_h");
-        }
+            if (temperature_high_events())
+            {
+                location.triggerLocPub(Trigger::NORMAL,"temp_h");
+            }
 
-        if (temperature_low_events())
-        {
-            location.triggerLocPub(Trigger::NORMAL,"temp_l");
+            if (temperature_low_events())
+            {
+                location.triggerLocPub(Trigger::NORMAL,"temp_l");
+            }
         }
+        break;
     }
 
 
@@ -802,8 +839,12 @@ void Tracker::loc_gen_cb(JSONWriter& writer, LocationPoint &loc, const void *con
     }
 
     // Check for Tracker One hardware
-    if (Tracker::instance().getModel() == TRACKER_MODEL_TRACKERONE)
-    {
-        writer.name("temp").value(get_temperature(), 1);
+    switch (Tracker::instance().getModel()) {
+        case TRACKER_MODEL_TRACKERONE:
+        // Fall through
+        case TRACKER_MODEL_PROJECT_89503: {
+            writer.name("temp").value(get_temperature(), 1);
+        }
+        break;
     }
 }
