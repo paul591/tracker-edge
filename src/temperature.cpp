@@ -24,10 +24,10 @@
 ThermistorConfig _thermistorConfig = {
   .circuit              = ThermistorCircuit::HIGH_SIDE_DIVIDER,  // Thermistor is between VCC and the ADC input
   .type                 = ThermistorType::NEGATIVE_COEFF,        // NTC type
-  .beta                 = 4200.0,       // B(25/50) figure
+  .beta                 = 3435.0,       // B(25/50) figure
   .t0                   = 25.0,         // degrees C
-  .r0                   = 100000.0,     // ohms
-  .fixedR               = 100000.0,     // ohms
+  .r0                   = 10000.0,      // ohms
+  .fixedR               = 10000.0,      // ohms
   .adcResolution        = 4096.0,       // values full-range
   .minTemperature       = -40.0,        // minimum temperature to represent
   .maxTemperature       = 150.0         // maximum temperature to represent

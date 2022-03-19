@@ -42,7 +42,7 @@
 #endif
 
 #ifndef TRACKER_PRODUCT_VERSION
-#define TRACKER_PRODUCT_VERSION               (100)
+#define TRACKER_PRODUCT_VERSION               (200)
 #endif
 
 
@@ -88,11 +88,13 @@
 //
 #define TRACKER_89503_THERMISTOR              (A3)
 #define TRACKER_89503_USER_BUTTON             (D2)
+#define TRACKER_89503_VIN_EN_PIN              (NFC_PIN2)
 
 #define TRACKER_89503_STS3X_I2C_INSTANCE      (Wire)
 #define TRACKER_89503_STS3X_I2C_ADDR          (0x4a)
 
 #define TRACKER_89503_ADP8866_I2C_INSTANCE    (Wire)
-#define TRACKER_89503_ADP8866_I2C_ADDR        (HAL_PLATFORM_EXTERNAL_RTC_I2C_ADDR)
+#define TRACKER_89503_ADP8866_I2C_ADDR        (0x27)
+#define TRACKER_89503_ADP8866_RESETN_PIN      (NFC_PIN1)
 
 //#define RTC_WDT_DISABLE

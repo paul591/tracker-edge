@@ -69,11 +69,20 @@ int appPublish(JSONWriter& message, LocationPoint& point, const void* context) {
     if (SHT31D_CC::SHT31D_ErrorCode::NO_ERROR != temp.error) {
         message.name("c_temp").value((double)temp.t, 1);
     }
+
+    FuelGauge fg;
+    auto voltage = fg.getVCell();
+    message.name("vbatt").value((double)voltage, 3);
     return SYSTEM_ERROR_NONE;
 }
 
 
 void setup() {
+    SystemPowerConfiguration conf;
+    conf.powerSourceMaxCurrent(2000); // milliamps
+    conf.batteryChargeCurrent(1200); // milliamps
+    int res = System.setPowerConfiguration(conf);
+
     // Optional - Wait for a waiting terminal for showing logs
     waitFor(Serial.isConnected, 10000);
 
