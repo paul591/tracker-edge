@@ -35,7 +35,7 @@
 #include "gnss_led.h"
 #include "temperature.h"
 #include "mcp_can.h"
-
+#include "memfault.h"
 
 //
 // Default configuration
@@ -365,6 +365,12 @@ class Tracker {
          */
         int prepareWake();
 
+        /**
+         * @brief Callback to collect Memfault metrics for heartbeat publishes
+         * 
+         */
+        void collectMemfaultHeartbeatMetrics();
+
         // underlying services exposed to allow sharing with rest of the system
         CloudService &cloudService;
         ConfigService &configService;
@@ -382,6 +388,7 @@ class Tracker {
         int chargeCallback(TemperatureChargeEvent event);
 
         static Tracker* _instance;
+        Memfault *_memfault {nullptr};
         TrackerCloudConfig _cloudConfig;
         TrackerConfiguration _deviceConfig;
 
