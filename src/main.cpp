@@ -236,20 +236,32 @@ void loop()
             nonIdleMin, nonIdleMean, nonIdleMax
         );
     }
+    
 
     // idleRPM is a setting configured from the cloud side 
-    if (Particle.connected() && lastRPM >= idleRPM) {
+    if (Particle.connected())
+    {
+        if(lastRPM >= idleRPM) 
+        {
         // If connected to the cloud and not off or at idle speed, we may want to speed up
         // publishing. This is done by settings engine.fastpub (integer) to a non-zero
         // value, the number of milliseconds between publishes. 
-        if (fastPublishPeriod > 0 && millis() - lastFastPublish >= (unsigned long) fastPublishPeriod) {
-            lastFastPublish = millis();
+            if (fastPublishPeriod > 0 && millis() - lastFastPublish >= (unsigned long) fastPublishPeriod) 
+            {
+                lastFastPublish = millis();
 
-            Log.info("manual publish lastRPM=%d idleRPM=%d period=%d", lastRPM, idleRPM, fastPublishPeriod);
+                Log.info("manual publish lastRPM=%d idleRPM=%d period=%d", lastRPM, idleRPM, fastPublishPeriod);
+                Tracker::instance().location.triggerLocPub();
+            }
+            
+        }
+        else if(((int)offSamples * requestPeriod / 1000) > 60)
+        {
+            offSamples = 0;
+            Log.info("manual timeout publish lastRPM=%d idleRPM=%d period=%d", lastRPM, idleRPM, fastPublishPeriod);
             Tracker::instance().location.triggerLocPub();
         }
     }
-
 }
 
 
