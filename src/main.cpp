@@ -255,11 +255,14 @@ void loop()
             }
             
         }
-        else if(((int)offSamples * requestPeriod / 1000) > 60)
+        else if(((int)offSamples * requestPeriod / 1000) > 900)
         {
             offSamples = 0;
             Log.info("manual timeout publish lastRPM=%d idleRPM=%d period=%d", lastRPM, idleRPM, fastPublishPeriod);
             Tracker::instance().location.triggerLocPub();
+            String rpm = String::format("%d",lastRPM);
+            Particle.publish("rpm", rpm , PRIVATE);
+
         }
     }
 }
