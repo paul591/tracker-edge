@@ -77,8 +77,8 @@ const unsigned long engineLogPeriod = 2000; // How often to log to Logger (debug
 unsigned long lastFastPublish = 0;
 
 // Configuration settings, synchronized with the cloud
-int fastPublishPeriod = 0;
-int idleRPM = 1600;
+int fastPublishPeriod = 1000;
+int idleRPM = 1100;
 
 // Object for the CAN library. Note: The Tracker SoM has the CAN chip connected to SPI1 not SPI!
 MCP_CAN canInterface(CAN_CS, SPI1);   
@@ -88,8 +88,8 @@ void locationGenerationCallback(JSONWriter &writer, LocationPoint &point, const 
 void setup()
 {
     // Uncomment to make it easier to see the serial logs at startup
-    // waitFor(Serial.isConnected, 15000);
-    // delay(1000);
+     waitFor(Serial.isConnected, 15000);
+     delay(1000);
 
     // Initialize tracker stuff
     Tracker::instance().init();
@@ -158,12 +158,12 @@ void loop()
         if ((rxId & 0x80000000) == 0x00000000) {
             // Standard frame 
 
-            // Log.info("%.3lx: %02x %02x %02x %02x %02x %02x ", rxId, rxBuf[0], rxBuf[1], rxBuf[2], rxBuf[3], rxBuf[4],rxBuf[5]  );            
+             Log.info("%.3lx: %02x %02x %02x %02x %02x %02x ", rxId, rxBuf[0], rxBuf[1], rxBuf[2], rxBuf[3], rxBuf[4],rxBuf[5]  );            
             if (rxId == OBD_CAN_REPLY_ID && rxBuf[0] == 0x04 && rxBuf[1] == 0x41 && rxBuf[2] == PID_ENGINE_RPM) {
                 lastRPM = (rxBuf[3] << 8) | rxBuf[4];
                 lastRPM /= 4;
 
-                // Log.info("rpm=%d", lastRPM);
+                Log.info("rpm=%d", lastRPM);
 
                 // We don't process the RPM here, it's done below (with an explanation why)
             }
