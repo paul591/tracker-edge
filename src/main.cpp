@@ -255,7 +255,7 @@ void loop()
             }
             
         }
-        else if(((int)offSamples * requestPeriod / 1000) > 900)
+        else if(((int)offSamples * requestPeriod / 1000) > 60)
         {
             offSamples = 0;
             Log.info("manual timeout publish lastRPM=%d idleRPM=%d period=%d", lastRPM, idleRPM, fastPublishPeriod);
